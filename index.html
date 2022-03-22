@@ -1,0 +1,1854 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>Sunset Across the U.S.</title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="data/USCities_1.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#fffd00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#fffd00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[16.9142089249542,-121.47912494721216],[54.93840836637946,-70.45595315567111]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_CartoDBPositron_0');
+        map.getPane('pane_CartoDBPositron_0').style.zIndex = 400;
+        var layer_CartoDBPositron_0 = L.tileLayer('http://a.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}@2x.png', {
+            pane: 'pane_CartoDBPositron_0',
+            opacity: 1.0,
+            attribution: '<a href="https://cartodb.com/basemaps/">Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_CartoDBPositron_0;
+        map.addLayer(layer_CartoDBPositron_0);
+        function pop_USCities_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">City</th>\
+                        <td>' + (feature.properties['City'] !== null ? autolinker.link(feature.properties['City'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">State</th>\
+                        <td>' + (feature.properties['State'] !== null ? autolinker.link(feature.properties['State'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Population</th>\
+                        <td>' + (feature.properties['Population'] !== null ? autolinker.link(feature.properties['Population'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Density</th>\
+                        <td>' + (feature.properties['Density'] !== null ? autolinker.link(feature.properties['Density'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Timezone</th>\
+                        <td>' + (feature.properties['Timezone'] !== null ? autolinker.link(feature.properties['Timezone'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Sunrise</th>\
+                        <td>' + (feature.properties['Sunrise'] !== null ? autolinker.link(feature.properties['Sunrise'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Sunset</th>\
+                        <td>' + (feature.properties['Sunset'] !== null ? autolinker.link(feature.properties['Sunset'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Daylight</th>\
+                        <td>' + (feature.properties['Daylight'] !== null ? autolinker.link(feature.properties['Daylight'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_USCities_1_0(feature) {
+            switch(String(feature.properties['Sunset'])) {
+                case '3:58 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,4,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3:59 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(0,0,7,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:01 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(1,1,10,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:02 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(3,2,16,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:05 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(4,3,21,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:06 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(6,5,26,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:08 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(8,6,31,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:12 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(11,8,37,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:14 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(13,10,42,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:15 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(16,12,48,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:16 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(19,13,53,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:17 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(22,14,59,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:18 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(25,15,65,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:19 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(29,16,71,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:20 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(32,17,77,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:21 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(36,17,83,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:22 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(40,17,89,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:23 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(44,17,94,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:24 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(48,17,100,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:25 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(52,16,105,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:26 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(56,15,109,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:27 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(60,15,113,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:28 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(65,15,116,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:29 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(69,15,119,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:30 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(73,15,121,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:31 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(77,17,122,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:32 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(81,18,124,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:33 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(85,20,125,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:34 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(89,21,126,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:35 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(93,23,127,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:36 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(97,24,128,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:37 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(101,26,128,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:38 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(105,27,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:39 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(109,29,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:40 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(113,30,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:41 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(116,32,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:42 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(120,33,130,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:43 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(124,35,130,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:44 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(128,36,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:45 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(132,38,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:46 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(135,39,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:47 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(139,41,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:48 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(143,42,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:49 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(147,43,129,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:50 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(151,44,128,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:51 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(155,46,127,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:52 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(159,47,126,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:53 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(164,49,126,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:54 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(168,50,125,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:55 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(172,51,124,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:56 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(176,52,123,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:57 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(180,53,122,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:58 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(184,55,121,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4:59 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(188,56,119,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:00 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(192,58,118,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:01 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(196,59,116,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:02 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(200,61,115,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:03 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(204,63,113,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:04 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(208,65,112,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:05 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(212,67,110,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:06 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,69,108,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:07 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,71,106,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:08 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(222,74,104,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:09 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(226,77,102,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:10 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(229,80,100,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:11 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(232,83,98,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:12 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(235,86,97,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:13 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(237,89,95,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:14 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(240,93,94,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:15 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(242,97,93,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:16 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(243,102,92,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:17 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(245,106,92,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:18 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(246,111,92,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:19 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(248,115,92,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:20 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(249,120,93,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:21 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(250,124,93,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:22 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(251,129,95,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:23 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,134,96,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:24 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,139,98,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:25 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,143,100,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:26 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,148,103,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:27 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,153,105,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:28 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,158,108,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:29 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,162,111,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:30 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,166,113,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:31 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,171,117,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:32 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,176,120,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:33 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,181,124,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:34 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,185,127,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:35 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,190,131,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:36 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,194,135,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:37 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,199,139,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:38 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,203,142,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:39 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,208,146,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:40 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,212,150,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:41 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,217,154,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:42 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,222,159,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:44 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,227,163,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:45 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,231,168,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:46 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,236,172,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:47 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,240,177,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:49 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,245,182,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5:50 PM':
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,249,187,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_USCities_1',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(252,253,191,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_USCities_1');
+        map.getPane('pane_USCities_1').style.zIndex = 401;
+        map.getPane('pane_USCities_1').style['mix-blend-mode'] = 'normal';
+        var layer_USCities_1 = new L.geoJson(json_USCities_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_USCities_1',
+            layerName: 'layer_USCities_1',
+            pane: 'pane_USCities_1',
+            onEachFeature: pop_USCities_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_USCities_1_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_USCities_1);
+        map.addLayer(layer_USCities_1);
+            var title = new L.Control();
+            title.onAdd = function (map) {
+                this._div = L.DomUtil.create('div', 'info');
+                this.update();
+                return this._div;
+            };
+            title.update = function () {
+                this._div.innerHTML = '<h2>Sunset Across the U.S.</h2>';
+            };
+            title.addTo(map);
+            var abstract = new L.Control({'position':'topright'});
+            abstract.onAdd = function (map) {
+                this._div = L.DomUtil.create('div',
+                'leaflet-control abstract');
+                this._div.id = 'abstract'
+                    this._div.setAttribute("onmouseenter", "abstract.show()");
+                    this._div.setAttribute("onmouseleave", "abstract.hide()");
+                    this.hide();
+                    return this._div;
+                };
+                abstract.hide = function () {
+                    this._div.classList.remove("abstractUncollapsed");
+                    this._div.classList.add("abstract");
+                    this._div.innerHTML = 'i'
+                }
+                abstract.show = function () {
+                    this._div.classList.remove("abstract");
+                    this._div.classList.add("abstractUncollapsed");
+                    this._div.innerHTML = 'When people living in the U.S.  experienced sunset on December 21,  2021 – the shortest day of the year.  Times are in Standard Time and are adjusted for local time zones.  <br /><br />Map by Rebecca M. Seifried, March 2022. Daylight times from <a href="https://sunrise-sunset.org">Sunrise-Sunset.org</a>. City point locations from the <a href="https://simplemaps.com/data/us-cities">SimpleMaps US Cities Database</a>. ';
+            };
+            abstract.addTo(map);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'U.S. Cities<br /><table><tr><td style="text-align: center;"><img src="legend/USCities_1_358PM0.png" /></td><td>3:58 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_359PM1.png" /></td><td>3:59 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_401PM2.png" /></td><td>4:01 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_402PM3.png" /></td><td>4:02 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_405PM4.png" /></td><td>4:05 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_406PM5.png" /></td><td>4:06 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_408PM6.png" /></td><td>4:08 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_412PM7.png" /></td><td>4:12 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_414PM8.png" /></td><td>4:14 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_415PM9.png" /></td><td>4:15 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_416PM10.png" /></td><td>4:16 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_417PM11.png" /></td><td>4:17 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_418PM12.png" /></td><td>4:18 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_419PM13.png" /></td><td>4:19 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_420PM14.png" /></td><td>4:20 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_421PM15.png" /></td><td>4:21 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_422PM16.png" /></td><td>4:22 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_423PM17.png" /></td><td>4:23 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_424PM18.png" /></td><td>4:24 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_425PM19.png" /></td><td>4:25 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_426PM20.png" /></td><td>4:26 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_427PM21.png" /></td><td>4:27 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_428PM22.png" /></td><td>4:28 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_429PM23.png" /></td><td>4:29 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_430PM24.png" /></td><td>4:30 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_431PM25.png" /></td><td>4:31 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_432PM26.png" /></td><td>4:32 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_433PM27.png" /></td><td>4:33 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_434PM28.png" /></td><td>4:34 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_435PM29.png" /></td><td>4:35 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_436PM30.png" /></td><td>4:36 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_437PM31.png" /></td><td>4:37 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_438PM32.png" /></td><td>4:38 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_439PM33.png" /></td><td>4:39 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_440PM34.png" /></td><td>4:40 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_441PM35.png" /></td><td>4:41 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_442PM36.png" /></td><td>4:42 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_443PM37.png" /></td><td>4:43 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_444PM38.png" /></td><td>4:44 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_445PM39.png" /></td><td>4:45 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_446PM40.png" /></td><td>4:46 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_447PM41.png" /></td><td>4:47 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_448PM42.png" /></td><td>4:48 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_449PM43.png" /></td><td>4:49 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_450PM44.png" /></td><td>4:50 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_451PM45.png" /></td><td>4:51 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_452PM46.png" /></td><td>4:52 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_453PM47.png" /></td><td>4:53 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_454PM48.png" /></td><td>4:54 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_455PM49.png" /></td><td>4:55 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_456PM50.png" /></td><td>4:56 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_457PM51.png" /></td><td>4:57 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_458PM52.png" /></td><td>4:58 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_459PM53.png" /></td><td>4:59 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_500PM54.png" /></td><td>5:00 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_501PM55.png" /></td><td>5:01 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_502PM56.png" /></td><td>5:02 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_503PM57.png" /></td><td>5:03 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_504PM58.png" /></td><td>5:04 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_505PM59.png" /></td><td>5:05 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_506PM60.png" /></td><td>5:06 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_507PM61.png" /></td><td>5:07 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_508PM62.png" /></td><td>5:08 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_509PM63.png" /></td><td>5:09 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_510PM64.png" /></td><td>5:10 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_511PM65.png" /></td><td>5:11 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_512PM66.png" /></td><td>5:12 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_513PM67.png" /></td><td>5:13 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_514PM68.png" /></td><td>5:14 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_515PM69.png" /></td><td>5:15 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_516PM70.png" /></td><td>5:16 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_517PM71.png" /></td><td>5:17 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_518PM72.png" /></td><td>5:18 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_519PM73.png" /></td><td>5:19 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_520PM74.png" /></td><td>5:20 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_521PM75.png" /></td><td>5:21 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_522PM76.png" /></td><td>5:22 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_523PM77.png" /></td><td>5:23 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_524PM78.png" /></td><td>5:24 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_525PM79.png" /></td><td>5:25 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_526PM80.png" /></td><td>5:26 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_527PM81.png" /></td><td>5:27 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_528PM82.png" /></td><td>5:28 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_529PM83.png" /></td><td>5:29 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_530PM84.png" /></td><td>5:30 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_531PM85.png" /></td><td>5:31 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_532PM86.png" /></td><td>5:32 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_533PM87.png" /></td><td>5:33 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_534PM88.png" /></td><td>5:34 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_535PM89.png" /></td><td>5:35 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_536PM90.png" /></td><td>5:36 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_537PM91.png" /></td><td>5:37 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_538PM92.png" /></td><td>5:38 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_539PM93.png" /></td><td>5:39 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_540PM94.png" /></td><td>5:40 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_541PM95.png" /></td><td>5:41 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_542PM96.png" /></td><td>5:42 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_544PM97.png" /></td><td>5:44 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_545PM98.png" /></td><td>5:45 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_546PM99.png" /></td><td>5:46 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_547PM100.png" /></td><td>5:47 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_549PM101.png" /></td><td>5:49 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_550PM102.png" /></td><td>5:50 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_103.png" /></td><td></td></tr></table>': layer_USCities_1,"CartoDB Positron": layer_CartoDBPositron_0,}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
