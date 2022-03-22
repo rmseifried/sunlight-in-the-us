@@ -8,6 +8,8 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
         <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
         <style>
         html, body, #map {
@@ -32,6 +34,9 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
         <script src="data/USCities_1.js"></script>
         <script>
         var highlightLayer;
@@ -51,7 +56,7 @@
         }
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[16.9142089249542,-121.47912494721216],[54.93840836637946,-70.45595315567111]]);
+        }).fitBounds([[23.63411612892004,-123.79793843548389],[54.26955357234905,-66.52978343548405]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -1849,6 +1854,271 @@
         var baseMaps = {};
         L.control.layers(baseMaps,{'U.S. Cities<br /><table><tr><td style="text-align: center;"><img src="legend/USCities_1_358PM0.png" /></td><td>3:58 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_359PM1.png" /></td><td>3:59 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_401PM2.png" /></td><td>4:01 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_402PM3.png" /></td><td>4:02 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_405PM4.png" /></td><td>4:05 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_406PM5.png" /></td><td>4:06 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_408PM6.png" /></td><td>4:08 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_412PM7.png" /></td><td>4:12 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_414PM8.png" /></td><td>4:14 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_415PM9.png" /></td><td>4:15 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_416PM10.png" /></td><td>4:16 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_417PM11.png" /></td><td>4:17 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_418PM12.png" /></td><td>4:18 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_419PM13.png" /></td><td>4:19 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_420PM14.png" /></td><td>4:20 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_421PM15.png" /></td><td>4:21 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_422PM16.png" /></td><td>4:22 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_423PM17.png" /></td><td>4:23 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_424PM18.png" /></td><td>4:24 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_425PM19.png" /></td><td>4:25 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_426PM20.png" /></td><td>4:26 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_427PM21.png" /></td><td>4:27 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_428PM22.png" /></td><td>4:28 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_429PM23.png" /></td><td>4:29 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_430PM24.png" /></td><td>4:30 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_431PM25.png" /></td><td>4:31 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_432PM26.png" /></td><td>4:32 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_433PM27.png" /></td><td>4:33 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_434PM28.png" /></td><td>4:34 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_435PM29.png" /></td><td>4:35 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_436PM30.png" /></td><td>4:36 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_437PM31.png" /></td><td>4:37 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_438PM32.png" /></td><td>4:38 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_439PM33.png" /></td><td>4:39 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_440PM34.png" /></td><td>4:40 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_441PM35.png" /></td><td>4:41 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_442PM36.png" /></td><td>4:42 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_443PM37.png" /></td><td>4:43 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_444PM38.png" /></td><td>4:44 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_445PM39.png" /></td><td>4:45 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_446PM40.png" /></td><td>4:46 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_447PM41.png" /></td><td>4:47 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_448PM42.png" /></td><td>4:48 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_449PM43.png" /></td><td>4:49 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_450PM44.png" /></td><td>4:50 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_451PM45.png" /></td><td>4:51 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_452PM46.png" /></td><td>4:52 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_453PM47.png" /></td><td>4:53 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_454PM48.png" /></td><td>4:54 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_455PM49.png" /></td><td>4:55 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_456PM50.png" /></td><td>4:56 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_457PM51.png" /></td><td>4:57 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_458PM52.png" /></td><td>4:58 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_459PM53.png" /></td><td>4:59 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_500PM54.png" /></td><td>5:00 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_501PM55.png" /></td><td>5:01 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_502PM56.png" /></td><td>5:02 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_503PM57.png" /></td><td>5:03 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_504PM58.png" /></td><td>5:04 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_505PM59.png" /></td><td>5:05 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_506PM60.png" /></td><td>5:06 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_507PM61.png" /></td><td>5:07 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_508PM62.png" /></td><td>5:08 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_509PM63.png" /></td><td>5:09 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_510PM64.png" /></td><td>5:10 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_511PM65.png" /></td><td>5:11 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_512PM66.png" /></td><td>5:12 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_513PM67.png" /></td><td>5:13 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_514PM68.png" /></td><td>5:14 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_515PM69.png" /></td><td>5:15 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_516PM70.png" /></td><td>5:16 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_517PM71.png" /></td><td>5:17 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_518PM72.png" /></td><td>5:18 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_519PM73.png" /></td><td>5:19 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_520PM74.png" /></td><td>5:20 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_521PM75.png" /></td><td>5:21 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_522PM76.png" /></td><td>5:22 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_523PM77.png" /></td><td>5:23 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_524PM78.png" /></td><td>5:24 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_525PM79.png" /></td><td>5:25 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_526PM80.png" /></td><td>5:26 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_527PM81.png" /></td><td>5:27 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_528PM82.png" /></td><td>5:28 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_529PM83.png" /></td><td>5:29 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_530PM84.png" /></td><td>5:30 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_531PM85.png" /></td><td>5:31 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_532PM86.png" /></td><td>5:32 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_533PM87.png" /></td><td>5:33 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_534PM88.png" /></td><td>5:34 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_535PM89.png" /></td><td>5:35 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_536PM90.png" /></td><td>5:36 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_537PM91.png" /></td><td>5:37 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_538PM92.png" /></td><td>5:38 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_539PM93.png" /></td><td>5:39 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_540PM94.png" /></td><td>5:40 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_541PM95.png" /></td><td>5:41 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_542PM96.png" /></td><td>5:42 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_544PM97.png" /></td><td>5:44 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_545PM98.png" /></td><td>5:45 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_546PM99.png" /></td><td>5:46 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_547PM100.png" /></td><td>5:47 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_549PM101.png" /></td><td>5:49 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_550PM102.png" /></td><td>5:50 PM</td></tr><tr><td style="text-align: center;"><img src="legend/USCities_1_103.png" /></td><td></td></tr></table>': layer_USCities_1,"CartoDB Positron": layer_CartoDBPositron_0,}).addTo(map);
         setBounds();
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"Population": "int","Timezone": "str","State": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Population = document.createElement("div");
+            div_Population.id = "div_Population";
+            div_Population.className = "slider";
+            document.getElementById("menu").appendChild(div_Population);
+            var lab_Population = document.createElement('div');
+            lab_Population.innerHTML  = 'Population: <span id="val_Population"></span>';
+            lab_Population.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_Population);
+            var reset_Population = document.createElement('div');
+            reset_Population.innerHTML = 'clear filter';
+            reset_Population.className = 'filterlabel';
+            lab_Population.className = 'filterlabel';
+            reset_Population.onclick = function() {
+                sel_Population.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_Population);
+            var sel_Population = document.getElementById('div_Population');
+            noUiSlider.create(sel_Population, {
+                connect: true,
+                start: [49848, 18713220],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 49848,
+                max: 18713220
+                }
+            });
+            sel_Population.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_Population = document.getElementById('val_Population');
+            val_Population.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Timezone = document.createElement('div');
+            div_Timezone.id = "div_Timezone";
+            div_Timezone.className= "filterselect";
+            document.getElementById("menu").appendChild(div_Timezone);
+            sel_Timezone = document.createElement('select');
+            sel_Timezone.multiple = true;
+            sel_Timezone.size = 9;
+            sel_Timezone.id = "sel_Timezone";
+            var Timezone_options_str = "<option value='' unselected></option>";
+            sel_Timezone.onchange = function(){filterFunc()};
+            Timezone_options_str  += '<option value="America/Boise">America/Boise</option>';
+            Timezone_options_str  += '<option value="America/Chicago">America/Chicago</option>';
+            Timezone_options_str  += '<option value="America/Denver">America/Denver</option>';
+            Timezone_options_str  += '<option value="America/Detroit">America/Detroit</option>';
+            Timezone_options_str  += '<option value="America/Indiana/Indianapolis">America/Indiana/Indianapolis</option>';
+            Timezone_options_str  += '<option value="America/Los_Angeles">America/Los_Angeles</option>';
+            Timezone_options_str  += '<option value="America/Matamoros">America/Matamoros</option>';
+            Timezone_options_str  += '<option value="America/New_York">America/New_York</option>';
+            Timezone_options_str  += '<option value="America/Phoenix">America/Phoenix</option>';
+            sel_Timezone.innerHTML = Timezone_options_str;
+            div_Timezone.appendChild(sel_Timezone);
+            var lab_Timezone = document.createElement('div');
+            lab_Timezone.innerHTML = 'Timezone';
+            lab_Timezone.className = 'filterlabel';
+            div_Timezone.appendChild(lab_Timezone);
+            var reset_Timezone = document.createElement('div');
+            reset_Timezone.innerHTML = 'clear filter';
+            reset_Timezone.className = 'filterlabel';
+            reset_Timezone.onclick = function() {
+                var options = document.getElementById("sel_Timezone").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_Timezone.appendChild(reset_Timezone);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_State = document.createElement('div');
+            div_State.id = "div_State";
+            div_State.className= "filterselect";
+            document.getElementById("menu").appendChild(div_State);
+            sel_State = document.createElement('select');
+            sel_State.multiple = true;
+            sel_State.size = 10;
+            sel_State.id = "sel_State";
+            var State_options_str = "<option value='' unselected></option>";
+            sel_State.onchange = function(){filterFunc()};
+            State_options_str  += '<option value="AL">AL</option>';
+            State_options_str  += '<option value="AR">AR</option>';
+            State_options_str  += '<option value="AZ">AZ</option>';
+            State_options_str  += '<option value="CA">CA</option>';
+            State_options_str  += '<option value="CO">CO</option>';
+            State_options_str  += '<option value="CT">CT</option>';
+            State_options_str  += '<option value="DC">DC</option>';
+            State_options_str  += '<option value="DE">DE</option>';
+            State_options_str  += '<option value="FL">FL</option>';
+            State_options_str  += '<option value="GA">GA</option>';
+            State_options_str  += '<option value="IA">IA</option>';
+            State_options_str  += '<option value="ID">ID</option>';
+            State_options_str  += '<option value="IL">IL</option>';
+            State_options_str  += '<option value="IN">IN</option>';
+            State_options_str  += '<option value="KS">KS</option>';
+            State_options_str  += '<option value="KY">KY</option>';
+            State_options_str  += '<option value="LA">LA</option>';
+            State_options_str  += '<option value="MA">MA</option>';
+            State_options_str  += '<option value="MD">MD</option>';
+            State_options_str  += '<option value="ME">ME</option>';
+            State_options_str  += '<option value="MI">MI</option>';
+            State_options_str  += '<option value="MN">MN</option>';
+            State_options_str  += '<option value="MO">MO</option>';
+            State_options_str  += '<option value="MS">MS</option>';
+            State_options_str  += '<option value="MT">MT</option>';
+            State_options_str  += '<option value="NC">NC</option>';
+            State_options_str  += '<option value="ND">ND</option>';
+            State_options_str  += '<option value="NE">NE</option>';
+            State_options_str  += '<option value="NH">NH</option>';
+            State_options_str  += '<option value="NJ">NJ</option>';
+            State_options_str  += '<option value="NM">NM</option>';
+            State_options_str  += '<option value="NV">NV</option>';
+            State_options_str  += '<option value="NY">NY</option>';
+            State_options_str  += '<option value="OH">OH</option>';
+            State_options_str  += '<option value="OK">OK</option>';
+            State_options_str  += '<option value="OR">OR</option>';
+            State_options_str  += '<option value="PA">PA</option>';
+            State_options_str  += '<option value="RI">RI</option>';
+            State_options_str  += '<option value="SC">SC</option>';
+            State_options_str  += '<option value="SD">SD</option>';
+            State_options_str  += '<option value="TN">TN</option>';
+            State_options_str  += '<option value="TX">TX</option>';
+            State_options_str  += '<option value="UT">UT</option>';
+            State_options_str  += '<option value="VA">VA</option>';
+            State_options_str  += '<option value="VT">VT</option>';
+            State_options_str  += '<option value="WA">WA</option>';
+            State_options_str  += '<option value="WI">WI</option>';
+            State_options_str  += '<option value="WV">WV</option>';
+            State_options_str  += '<option value="WY">WY</option>';
+            sel_State.innerHTML = State_options_str;
+            div_State.appendChild(sel_State);
+            var lab_State = document.createElement('div');
+            lab_State.innerHTML = 'State';
+            lab_State.className = 'filterlabel';
+            div_State.appendChild(lab_State);
+            var reset_State = document.createElement('div');
+            reset_State.innerHTML = 'clear filter';
+            reset_State.className = 'filterlabel';
+            reset_State.onclick = function() {
+                var options = document.getElementById("sel_State").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_State.appendChild(reset_State);
         </script>
     </body>
 </html>
